@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { instanceToPlain } from 'class-transformer';
@@ -20,6 +20,7 @@ export class UserService {
       });
       return user;
     } catch (error) {
+      Logger.error(error);
       throw new Error('Error finding user by email');
     }
   }
@@ -31,6 +32,7 @@ export class UserService {
       });
       return user;
     } catch (error) {
+      Logger.error(error);
       throw new Error('Error finding user by ID');
     }
   }

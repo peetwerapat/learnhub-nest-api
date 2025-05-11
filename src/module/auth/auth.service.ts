@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  HttpStatus,
   Injectable,
   Logger,
   UnauthorizedException,
@@ -33,7 +34,7 @@ export class AuthService {
       if (userExists) {
         throw new ConflictException(
           new BaseHttpResponse({
-            statusCode: 409,
+            statusCode: HttpStatus.CONFLICT,
             message: {
               en: 'Email already exists...',
               th: 'อีเมลนี้มีอยู่แล้ว...',
@@ -50,7 +51,7 @@ export class AuthService {
       await this.userRepository.save(user);
 
       return new BaseHttpResponse({
-        statusCode: 201,
+        statusCode: HttpStatus.CREATED,
         message: {
           en: 'User registration successful...',
           th: 'สร้างบัญชีผู้ใช้สำเร็จ...',
@@ -70,7 +71,7 @@ export class AuthService {
 
       if (!user) {
         throw new BadRequestException({
-          statusCode: 400,
+          statusCode: HttpStatus.BAD_REQUEST,
           message: {
             th: 'ไม่พบอีเมลนี้ในระบบ กรุณาสมัครสมาชิกก่อนใช้งาน',
             en: 'This email was not found in our system. Please register before using our services.',
@@ -82,7 +83,7 @@ export class AuthService {
 
       if (!isPasswordMatch) {
         throw new UnauthorizedException({
-          statusCode: 401,
+          statusCode: HttpStatus.UNAUTHORIZED,
           message: {
             th: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง',
             en: 'Email or password is incorrect.',
@@ -97,7 +98,7 @@ export class AuthService {
       const token = this.jwtService.generateJwt(payload);
 
       return new HttpResponse({
-        statusCode: 200,
+        statusCode: HttpStatus.OK,
         message: { th: 'เข้าสู่ระบบสำเร็จ', en: 'Login successfully.' },
         data: token,
       });
