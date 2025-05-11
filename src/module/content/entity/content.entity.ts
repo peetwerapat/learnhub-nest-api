@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -31,7 +32,8 @@ export class Content {
   @Column()
   creatorName: string;
 
-  @ManyToOne(() => User, { eager: false })
+  @ManyToOne(() => User, (user) => user.contents)
+  @JoinColumn({ name: 'userId' })
   user: User;
 
   @CreateDateColumn()

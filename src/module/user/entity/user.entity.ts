@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Content } from 'src/module/content/entity/content.entity';
 
 @Entity()
 export class User {
@@ -16,4 +17,7 @@ export class User {
 
   @Column({ nullable: false })
   lastName: string;
+
+  @OneToMany(() => Content, (content) => content.user)
+  contents: Content[];
 }

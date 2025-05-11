@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository } from 'typeorm';
 import { FindAllQuery } from 'src/common/types/global.type';
@@ -35,6 +35,16 @@ export class ContentService {
           message: {
             th: 'กรุณาเข้่าสู่ระบบก่อนใช้งาน',
             en: 'Please login before create content.',
+          },
+        });
+      }
+
+      if (createContent.rating < 0 || createContent.rating > 5) {
+        throw new BadRequestException({
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: {
+            th: 'กรุณาให้คะแนนระหว่าง 0 ถึง 5 เท่านั้น',
+            en: 'Rating must be between 0 and 5.',
           },
         });
       }
@@ -87,14 +97,17 @@ export class ContentService {
     pageSize,
     order = 'DESC',
   }: FindAllQuery): Promise<HttpResponseType<ContentDto[]>> {
-    const qb = this.contentRepository.createQueryBuilder('contents');
+    const qb = this.contentRepository
+      .createQueryBuilder('contents')
+      .leftJoin('contents.user', 'user')
+      .addSelect(['user.firstName', 'user.lastName']);
 
     const { skip, take } = getPaginationValue({ page, pageSize });
 
     if (search) {
       qb.andWhere(
         new Brackets((qb) => {
-          qb.andWhere('LOWER(content.title) LIKE LOWER(:search)', {
+          qb.andWhere('LOWER(contents.videoTitle) LIKE LOWER(:search)', {
             search: `%${search}%`,
           });
         }),
@@ -102,19 +115,6 @@ export class ContentService {
     }
 
     const [contents, totalCounts] = await qb
-      .select([
-        'contents.id',
-        'contents.videoTitle',
-        'contents.videoUrl',
-        'contents.comment',
-        'contents.rating',
-        'contents.thumbnailUrl',
-        'contents.creatorName',
-        'contents.createdAt',
-        'contents.updatedAt',
-        'user.email',
-      ])
-      .leftJoin('contents.user', 'user')
       .skip(skip)
       .take(take)
       .orderBy('contents.id', order === 'ASC' ? 'ASC' : 'DESC')
@@ -128,7 +128,7 @@ export class ContentService {
       rating: content.rating,
       thumbnailUrl: content.thumbnailUrl,
       creatorName: content.creatorName,
-      postedBy: content.user?.firstName + ' ' + content.user?.lastName,
+      postedBy: content.user ? `${content.user.firstName} ${content.user.lastName}` : '',
       createdAt: content.createdAt,
       updatedAt: content.updatedAt,
     }));
