@@ -3,6 +3,7 @@ import {
   ApiBadRequestResponse,
   ApiConflictResponse,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -36,10 +37,10 @@ export class AuthController {
   }
 
   @Post('sign-in')
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     description: 'Login successfully.',
     example: new BaseHttpResponse({
-      statusCode: HttpStatus.CREATED,
+      statusCode: HttpStatus.OK,
       message: { en: 'Login successfully.', th: 'เข้าสู่ระบบสำเร็จ' },
     }),
   })
