@@ -31,7 +31,7 @@ export class Content {
   @Column()
   creatorName: string;
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { eager: false })
   user: User;
 
   @CreateDateColumn()

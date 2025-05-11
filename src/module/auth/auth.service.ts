@@ -8,13 +8,13 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { BaseHttpResponse, HttpResponse } from 'src/common/http-response.type';
+import { BaseHttpResponse, HttpResponse } from 'src/common/types/http-response.type';
 import { EncryptionService } from 'src/lib/security/encryption';
 import { JwtPayloadModel, JwtService } from 'src/lib/security/jwt';
 
 import { User } from '../user/entity/user.entity';
 
-import { AuthDto } from './dto';
+import { SignInDto, SignUpDto } from './dto';
 
 @Injectable()
 export class AuthService {
@@ -24,9 +24,9 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signUp(authDto: AuthDto): Promise<BaseHttpResponse> {
+  async signUp(signUpDto: SignUpDto): Promise<BaseHttpResponse> {
     try {
-      const { email, password } = authDto;
+      const { email, password } = signUpDto;
 
       const userExists = await this.userRepository.findOne({
         where: { email },
@@ -45,7 +45,7 @@ export class AuthService {
 
       const hashPassword = await EncryptionService.hashPassword(password);
       const user = this.userRepository.create({
-        ...authDto,
+        ...signUpDto,
         password: hashPassword,
       });
       await this.userRepository.save(user);
@@ -63,9 +63,9 @@ export class AuthService {
     }
   }
 
-  async signIn(authDto: AuthDto) {
+  async signIn(signInDto: SignInDto) {
     try {
-      const { email, password } = authDto;
+      const { email, password } = signInDto;
 
       const user = await this.userRepository.findOne({ where: { email } });
 
