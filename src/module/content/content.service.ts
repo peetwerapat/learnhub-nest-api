@@ -1,11 +1,13 @@
 import { HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
+import { FindAllQuery } from 'src/common/types/global.type';
+import { generatePagination, getPaginationValue } from 'src/common/utils/pagination';
 import { OEmbedService } from 'src/lib/oembed/oembed.service';
 
+import { HttpResponseType } from '../../common/types/http-response.type';
 import { User } from '../user/entity/user.entity';
 
-import { HttpResponseType } from './../../common/http-response.type';
 import { Content } from './entity/content.entity';
 import { ContentDto, CreateContentDto } from './dto';
 
@@ -66,7 +68,7 @@ export class ContentService {
           rating: newContent.rating,
           thumbnailUrl: newContent.thumbnailUrl,
           creatorName: newContent.creatorName,
-          postedBy: user.email,
+          postedBy: user.firstName + user.lastName,
           createdAt: newContent.createdAt,
           updatedAt: newContent.updatedAt,
         },
@@ -77,5 +79,70 @@ export class ContentService {
     } finally {
       await qr.release();
     }
+  }
+
+  async findAll({
+    search,
+    page,
+    pageSize,
+    order = 'DESC',
+  }: FindAllQuery): Promise<HttpResponseType<ContentDto[]>> {
+    const qb = this.contentRepository.createQueryBuilder('contents');
+
+    const { skip, take } = getPaginationValue({ page, pageSize });
+
+    if (search) {
+      qb.andWhere(
+        new Brackets((qb) => {
+          qb.andWhere('LOWER(content.title) LIKE LOWER(:search)', {
+            search: `%${search}%`,
+          });
+        }),
+      );
+    }
+
+    const [contents, totalCounts] = await qb
+      .select([
+        'contents.id',
+        'contents.videoTitle',
+        'contents.videoUrl',
+        'contents.comment',
+        'contents.rating',
+        'contents.thumbnailUrl',
+        'contents.creatorName',
+        'contents.createdAt',
+        'contents.updatedAt',
+        'user.email',
+      ])
+      .leftJoin('contents.user', 'user')
+      .skip(skip)
+      .take(take)
+      .orderBy('contents.id', order === 'ASC' ? 'ASC' : 'DESC')
+      .getManyAndCount();
+
+    const contentDtos: ContentDto[] = contents.map((content) => ({
+      id: content.id,
+      videoTitle: content.videoTitle,
+      videoUrl: content.videoUrl,
+      comment: content.comment,
+      rating: content.rating,
+      thumbnailUrl: content.thumbnailUrl,
+      creatorName: content.creatorName,
+      postedBy: content.user?.firstName + content.user?.lastName || '',
+      createdAt: content.createdAt,
+      updatedAt: content.updatedAt,
+    }));
+
+    const pagination = generatePagination({ totalCounts, skip, take });
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: {
+        en: 'Find all contents success.',
+        th: 'ดึงข้อมูลคอนเทนต์ทั้งหมดสำเร็จ',
+      },
+      data: contentDtos,
+      pagination,
+    };
   }
 }

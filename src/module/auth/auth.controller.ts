@@ -7,10 +7,10 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { BaseHttpResponse } from 'src/common/http-response.type';
+import { BaseHttpResponse } from 'src/common/types/http-response.type';
 
 import { AuthService } from './auth.service';
-import { AuthDto } from './dto';
+import { SignInDto, SignUpDto } from './dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -32,8 +32,8 @@ export class AuthController {
       message: { en: 'Email already exists...', th: 'อีเมลนี้มีอยู่แล้ว...' },
     }),
   })
-  async create(@Body() authDto: AuthDto) {
-    return this.authService.signUp(authDto);
+  async create(@Body() signUpDto: SignUpDto) {
+    return this.authService.signUp(signUpDto);
   }
 
   @Post('sign-in')
@@ -61,7 +61,7 @@ export class AuthController {
       message: { en: 'Email or password is incorrect.', th: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' },
     }),
   })
-  async signIn(@Body() authDto: AuthDto) {
-    return this.authService.signIn(authDto);
+  async signIn(@Body() signInDto: SignInDto) {
+    return this.authService.signIn(signInDto);
   }
 }

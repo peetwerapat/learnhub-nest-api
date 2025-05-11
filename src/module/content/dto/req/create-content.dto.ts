@@ -9,7 +9,7 @@ export class CreateContentDto {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
-  comment: string;
+  comment?: string;
 
   @ApiProperty()
   @IsNumber()
