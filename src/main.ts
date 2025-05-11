@@ -44,7 +44,7 @@ async function bootstrap() {
     swaggerOptions: {
       operationsSorter: 'method',
       tagsSorter: 'alpha',
-      defaultModelsExpandDepth: -1,
+      // defaultModelsExpandDepth: -1,
       docExpansion: 'none',
     },
   });
