@@ -21,7 +21,7 @@ export function getPaginationValue({
 
   const preTake = isNaN(pageSize) || isNil(pageSize) ? DEFAULT_PAGE_SIZE : pageSize;
 
-  const prePage = isNaN(page) || isNil(pageSize) ? DEFAULT_PAGE : page;
+  const prePage = isNaN(page) || isNil(page) ? DEFAULT_PAGE : page;
 
   const take = preTake > MAX_RECORD_PER_PAGE ? MAX_RECORD_PER_PAGE : preTake;
 

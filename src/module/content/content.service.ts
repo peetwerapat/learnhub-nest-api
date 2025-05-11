@@ -68,7 +68,7 @@ export class ContentService {
           rating: newContent.rating,
           thumbnailUrl: newContent.thumbnailUrl,
           creatorName: newContent.creatorName,
-          postedBy: user.firstName + user.lastName,
+          postedBy: user.firstName + ' ' + user.lastName,
           createdAt: newContent.createdAt,
           updatedAt: newContent.updatedAt,
         },
@@ -128,7 +128,7 @@ export class ContentService {
       rating: content.rating,
       thumbnailUrl: content.thumbnailUrl,
       creatorName: content.creatorName,
-      postedBy: content.user?.firstName + content.user?.lastName || '',
+      postedBy: content.user?.firstName + ' ' + content.user?.lastName,
       createdAt: content.createdAt,
       updatedAt: content.updatedAt,
     }));

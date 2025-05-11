@@ -91,8 +91,8 @@ export class ContentController {
   ) {
     return this.contentService.findAll({
       search,
-      page: parseInt(page || '0'),
-      pageSize: parseInt(pageSize || '0'),
+      page: parseInt(page || '1'),
+      pageSize: parseInt(pageSize || '10'),
       order,
     });
   }
