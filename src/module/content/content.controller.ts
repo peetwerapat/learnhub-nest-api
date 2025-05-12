@@ -62,7 +62,7 @@ export class ContentController {
     return this.contentService.create(createContentDto);
   }
 
-  @Get('')
+  @Get()
   @ApiOkResponse({
     description: 'Find all contents success.',
     example: new BaseHttpResponse({
