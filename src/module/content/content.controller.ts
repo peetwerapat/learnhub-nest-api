@@ -4,6 +4,7 @@ import {
   Get,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Post,
   Query,
   Request,
@@ -61,7 +62,7 @@ export class ContentController {
     return this.contentService.create(createContentDto);
   }
 
-  @Get('contents')
+  @Get()
   @ApiOkResponse({
     description: 'Find all contents success.',
     example: new BaseHttpResponse({
@@ -129,7 +130,7 @@ export class ContentController {
       },
     }),
   })
-  async findOne(@Param('id') id: number): Promise<HttpResponseType<ContentDto>> {
+  async findOne(@Param('id', ParseIntPipe) id: number): Promise<HttpResponseType<ContentDto>> {
     return this.contentService.findOneByContentId(id);
   }
 }
