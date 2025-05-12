@@ -73,8 +73,8 @@ export class AuthService {
         throw new BadRequestException({
           statusCode: HttpStatus.BAD_REQUEST,
           message: {
-            th: 'ไม่พบอีเมลนี้ในระบบ กรุณาสมัครสมาชิกก่อนใช้งาน',
             en: 'This email was not found in our system. Please register before using our services.',
+            th: 'ไม่พบอีเมลนี้ในระบบ กรุณาสมัครสมาชิกก่อนใช้งาน',
           },
         });
       }
@@ -85,8 +85,8 @@ export class AuthService {
         throw new UnauthorizedException({
           statusCode: HttpStatus.UNAUTHORIZED,
           message: {
-            th: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง',
             en: 'Email or password is incorrect.',
+            th: 'อีเมลหรือรหัสผ่านไม่ถูกต้อง',
           },
         });
       }
@@ -99,7 +99,7 @@ export class AuthService {
 
       return new HttpResponse({
         statusCode: HttpStatus.OK,
-        message: { th: 'เข้าสู่ระบบสำเร็จ', en: 'Login successfully.' },
+        message: { en: 'Login successfully.', th: 'เข้าสู่ระบบสำเร็จ' },
         data: token,
       });
     } catch (error) {

@@ -1,5 +1,16 @@
-import { Body, Controller, Get, HttpStatus, Post, Query, Request, UseGuards } from '@nestjs/common';
 import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+  Query,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
@@ -8,13 +19,13 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Request as ExpressRequest } from 'express';
-import { BaseHttpResponse } from 'src/common/types/http-response.type';
+import { BaseHttpResponse, HttpResponseType } from 'src/common/types/http-response.type';
 import { JwtAuthGuard } from 'src/lib/security/jwt/guard';
 
 import { User } from '../user/entity/user.entity';
 
 import { ContentService } from './content.service';
-import { CreateContentDto } from './dto';
+import { ContentDto, CreateContentDto } from './dto';
 
 @ApiTags('content')
 @Controller('content')
@@ -88,12 +99,37 @@ export class ContentController {
     @Query('page') page?: string,
     @Query('pageSize') pageSize?: string,
     @Query('order') order?: 'ASC' | 'DESC',
-  ) {
+  ): Promise<HttpResponseType<ContentDto[]>> {
     return this.contentService.findAll({
       search,
       page: parseInt(page || '1'),
       pageSize: parseInt(pageSize || '10'),
       order,
     });
+  }
+
+  @Get(':id')
+  @ApiOkResponse({
+    description: 'Find content success.',
+    example: new BaseHttpResponse({
+      statusCode: HttpStatus.OK,
+      message: {
+        en: 'Find content success.',
+        th: 'ดึงข้อมูลคอนเทนต์สำเร็จ',
+      },
+    }),
+  })
+  @ApiBadRequestResponse({
+    description: 'Content not found.',
+    example: new BaseHttpResponse({
+      statusCode: HttpStatus.BAD_REQUEST,
+      message: {
+        en: 'Content not found.',
+        th: 'ไม่พบคอนเทนต์ที่คุณร้องขอ',
+      },
+    }),
+  })
+  async findOne(@Param('id') id: number): Promise<HttpResponseType<ContentDto>> {
+    return this.contentService.findOneByContentId(id);
   }
 }

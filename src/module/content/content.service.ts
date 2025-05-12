@@ -33,8 +33,8 @@ export class ContentService {
         throw new UnauthorizedException({
           statusCode: HttpStatus.UNAUTHORIZED,
           message: {
-            th: 'กรุณาเข้่าสู่ระบบก่อนใช้งาน',
             en: 'Please login before create content.',
+            th: 'กรุณาเข้่าสู่ระบบก่อนใช้งาน',
           },
         });
       }
@@ -43,8 +43,8 @@ export class ContentService {
         throw new BadRequestException({
           statusCode: HttpStatus.BAD_REQUEST,
           message: {
-            th: 'กรุณาให้คะแนนระหว่าง 0 ถึง 5 เท่านั้น',
             en: 'Rating must be between 0 and 5.',
+            th: 'กรุณาให้คะแนนระหว่าง 0 ถึง 5 เท่านั้น',
           },
         });
       }
@@ -143,6 +143,45 @@ export class ContentService {
       },
       data: contentDtos,
       pagination,
+    };
+  }
+
+  async findOneByContentId(contentId: number): Promise<HttpResponseType<ContentDto>> {
+    const qb = this.contentRepository
+      .createQueryBuilder('contents')
+      .leftJoin('contents.user', 'user')
+      .addSelect(['user.firstName', 'user.lastName']);
+
+    const content = await qb.andWhere({ id: contentId }).getOne();
+
+    if (!content) {
+      throw new BadRequestException({
+        statusCode: HttpStatus.BAD_REQUEST,
+        message: {
+          en: 'Content not found.',
+          th: 'ไม่พบคอนเทนต์ที่คุณร้องขอ',
+        },
+      });
+    }
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: {
+        en: 'Find content success.',
+        th: 'ดึงข้อมูลคอนเทนต์สำเร็จ',
+      },
+      data: {
+        id: content.id,
+        videoTitle: content.videoTitle,
+        videoUrl: content.videoUrl,
+        comment: content.comment,
+        rating: content.rating,
+        thumbnailUrl: content.thumbnailUrl,
+        creatorName: content.creatorName,
+        postedBy: content.user ? `${content.user.firstName} ${content.user.lastName}` : '',
+        createdAt: content.createdAt,
+        updatedAt: content.updatedAt,
+      },
     };
   }
 }
