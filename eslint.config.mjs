@@ -4,9 +4,10 @@ import tseslint from 'typescript-eslint';
 import prettierPlugin from 'eslint-plugin-prettier';
 import simpleImportSortPlugin from 'eslint-plugin-simple-import-sort';
 
-
 /** @type {import('eslint').FlatConfig.Config[]} */
 export default [
+  pluginJs.configs.recommended,
+  ...tseslint.configs.recommended,
   {
     files: ['**/*.{js,ts}'],
     languageOptions: {
@@ -61,6 +62,4 @@ export default [
       ],
     },
   },
-  pluginJs.configs.recommended,
-  ...tseslint.configs.recommended,
 ];
