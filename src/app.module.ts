@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AuthModule } from './module/auth/auth.module';
-import { ContentModule } from './module/content/content.module';
-import { UserModule } from './module/user/user.module';
+import { AuthModule } from './domain/auth/auth.module';
+import { ContentModule } from './domain/content/content.module';
+import { UserModule } from './domain/user/user.module';
 
 @Module({
   imports: [
