@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtModule } from 'src/lib/security/jwt';
+import { JwtModule } from 'src/common/security/jwt';
 
 import { User } from '../user/entity/user.entity';
 import { UserModule } from '../user/user.module';

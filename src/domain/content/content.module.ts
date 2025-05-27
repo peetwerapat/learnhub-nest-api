@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { OEmbedService } from 'src/lib/oembed/oembed.service';
+import { OEmbedService } from 'src/common/oembed/oembed.service';
 
 import { User } from '../user/entity/user.entity';
 

@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, Repository } from 'typeorm';
 import { FindAllQuery } from 'src/common/types/global.type';
 import { generatePagination, getPaginationValue } from 'src/common/utils/pagination';
-import { OEmbedService } from 'src/lib/oembed/oembed.service';
+import { OEmbedService } from 'src/common/oembed/oembed.service';
 
 import { HttpResponseType } from '../../common/types/http-response.type';
 import { User } from '../user/entity/user.entity';

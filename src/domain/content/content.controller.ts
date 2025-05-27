@@ -21,7 +21,7 @@ import {
 } from '@nestjs/swagger';
 import { Request as ExpressRequest } from 'express';
 import { BaseHttpResponse, HttpResponseType } from 'src/common/types/http-response.type';
-import { JwtAuthGuard } from 'src/lib/security/jwt/guard';
+import { JwtAuthGuard } from 'src/common/security/jwt/guard';
 
 import { User } from '../user/entity/user.entity';
 

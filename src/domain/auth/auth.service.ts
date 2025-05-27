@@ -8,9 +8,9 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { EncryptionService } from 'src/common/security/encryption';
+import { JwtPayloadModel, JwtService } from 'src/common/security/jwt';
 import { BaseHttpResponse, HttpResponse } from 'src/common/types/http-response.type';
-import { EncryptionService } from 'src/lib/security/encryption';
-import { JwtPayloadModel, JwtService } from 'src/lib/security/jwt';
 
 import { User } from '../user/entity/user.entity';
 
