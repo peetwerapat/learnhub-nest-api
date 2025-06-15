@@ -1,21 +1,24 @@
 import { Body, Controller, HttpStatus, Post } from '@nestjs/common';
 import {
-  ApiBadRequestResponse,
   ApiConflictResponse,
   ApiCreatedResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { BaseHttpResponse } from 'src/common/types/http-response.type';
 
-import { AuthService } from './auth.service';
 import { SignInDto, SignUpDto } from './dto';
+import { SignInUseCase, SignUpUseCase } from './usecase';
 
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly _signUpUsecase: SignUpUseCase,
+    private readonly _signInUsecase: SignInUseCase,
+  ) {}
 
   @Post('sign-up')
   @ApiCreatedResponse({
@@ -33,7 +36,7 @@ export class AuthController {
     }),
   })
   async create(@Body() signUpDto: SignUpDto) {
-    return this.authService.signUp(signUpDto);
+    return this._signUpUsecase.execute(signUpDto);
   }
 
   @Post('sign-in')
@@ -44,10 +47,10 @@ export class AuthController {
       message: { en: 'Login successfully.', th: 'เข้าสู่ระบบสำเร็จ' },
     }),
   })
-  @ApiBadRequestResponse({
+  @ApiNotFoundResponse({
     description: 'This email was not found in our system.',
     example: new BaseHttpResponse({
-      statusCode: HttpStatus.BAD_REQUEST,
+      statusCode: HttpStatus.NOT_FOUND,
       message: {
         en: 'This email was not found in our system. Please register before using our services.',
         th: 'ไม่พบอีเมลนี้ในระบบ กรุณาสมัครสมาชิกก่อนใช้งาน',
@@ -62,6 +65,6 @@ export class AuthController {
     }),
   })
   async signIn(@Body() signInDto: SignInDto) {
-    return this.authService.signIn(signInDto);
+    return this._signInUsecase.execute(signInDto);
   }
 }

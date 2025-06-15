@@ -11,6 +11,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtAuthGuardName } from './constants';
 import { JwtAuthStrategy } from './strategies';
+import { SignInUseCase, SignUpUseCase } from './usecase';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { JwtAuthStrategy } from './strategies';
     PassportModule.register({ defaultStrategy: [JwtAuthGuardName] }),
     JwtModule,
   ],
-  providers: [UserService, AuthService, JwtAuthStrategy],
+  providers: [UserService, AuthService, JwtAuthStrategy, SignInUseCase, SignUpUseCase],
   controllers: [AuthController],
 })
 export class AuthModule {}

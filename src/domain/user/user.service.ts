@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
@@ -11,15 +11,11 @@ export class UserService {
     private userRepository: Repository<User>,
   ) {}
 
-  async findOneById(id: number) {
-    try {
-      const user = await this.userRepository.findOne({
-        where: { id },
-      });
-      return user;
-    } catch (error) {
-      Logger.error(error);
-      throw new Error('Error finding user by ID');
-    }
+  async findOneById(id: number): Promise<User | null> {
+    return this.userRepository.findOne({ where: { id } });
+  }
+
+  async findOneByEmail(email: string): Promise<User | null> {
+    return this.userRepository.findOne({ where: { email } });
   }
 }
