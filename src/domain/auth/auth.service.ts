@@ -1,9 +1,9 @@
 import {
-  BadRequestException,
   ConflictException,
   HttpStatus,
   Injectable,
   Logger,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -13,6 +13,7 @@ import { JwtPayloadModel, JwtService } from 'src/common/security/jwt';
 import { BaseHttpResponse, HttpResponse } from 'src/common/types/http-response.type';
 
 import { User } from '../user/entity/user.entity';
+import { FindOneUserByEmailUseCase } from '../user/usecase';
 
 import { SignInDto, SignUpDto } from './dto';
 
@@ -22,15 +23,15 @@ export class AuthService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private readonly jwtService: JwtService,
+    private readonly _findOneUserByEmailUseCase: FindOneUserByEmailUseCase,
   ) {}
 
   async signUp(signUpDto: SignUpDto): Promise<BaseHttpResponse> {
     try {
       const { email, password } = signUpDto;
 
-      const userExists = await this.userRepository.findOne({
-        where: { email },
-      });
+      const userExists = await this._findOneUserByEmailUseCase.execute(email);
+
       if (userExists) {
         throw new ConflictException(
           new BaseHttpResponse({
@@ -67,11 +68,11 @@ export class AuthService {
     try {
       const { email, password } = signInDto;
 
-      const user = await this.userRepository.findOne({ where: { email } });
+      const user = await this._findOneUserByEmailUseCase.execute(email);
 
       if (!user) {
-        throw new BadRequestException({
-          statusCode: HttpStatus.BAD_REQUEST,
+        throw new NotFoundException({
+          statusCode: HttpStatus.NOT_FOUND,
           message: {
             en: 'This email was not found in our system. Please register before using our services.',
             th: 'ไม่พบอีเมลนี้ในระบบ กรุณาสมัครสมาชิกก่อนใช้งาน',
